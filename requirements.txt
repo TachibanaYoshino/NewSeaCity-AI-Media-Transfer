@@ -2,13 +2,16 @@
 # cv
 easydict
 opencv-python
-sklearn
-scipy
 numpy
-scikit-image
 pillow
 #tensorflow-GPU==1.15.0
 
 --index-url=https://pypi.tuna.tsinghua.edu.cn/simple/
+
+
+
+
+
+
 
 

@@ -1,6 +1,5 @@
 import os, base64
-from io import  BytesIO
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 import sys
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -22,7 +21,8 @@ alpha_img = Image.open("models/alpha.jpg")
 facer = FaceAna(["models/detector.pb", "models/keypoints.pb"])
 
 class Videocap:
-    def __init__(self, name,limit=1024):
+    def __init__(self, name, limit=1024):
+
         vid = cv2.VideoCapture(name)
         width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -36,21 +36,29 @@ class Videocap:
         # width = int(round(width * scale_factor))
         # self.width, self.height = self.to_8s(width), self.to_8s(height)
 
+        self.count = 0  # Records the number of frames entered into the queue.
         self.cap =vid
-
-        self.q = queue.Queue(maxsize=100)
+        self.ret, frame = self.cap.read()
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        self.q =  queue.Queue(maxsize=100)
         t = threading.Thread(target=self._reader)
         t.daemon = True
         t.start()
+
     def _reader(self):
         while True:
             # print("get me")
-            ret, frame = self.cap.read()
-            if not ret:
+            self.ret, frame = self.cap.read()
+            if not self.ret:
                 break
             self.q.put(frame[:,:,::-1])
+            self.count+=1
+        self.cap.release()
+
     def read(self):
-        return self.q.get()
+        f = self.q.get()
+        self.q.task_done()
+        return f
 
 
 class Cartoonizer():
@@ -155,17 +163,22 @@ class Cartoonizer():
         return np.array(res)[:,:,::-1]  # rgb
 
 
-    def Convert_video(self, input_video_path):
+    def Convert_video(self, input_video_path, save_dir):
         # for op in self.sess_land.graph.get_operations():
         #     print(op.name, op.values())
         # load video
+        save_path = os.path.join(save_dir, os.path.basename(input_video_path).rsplit('.',1)[0]+f"_{self.name}.mp4")
         vid = Videocap(input_video_path)
         codec = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
         num = vid.total
-        video_out = cv2.VideoWriter(input_video_path.rsplit('.',1)[0]+f'_{self.name}.mp4', codec, vid.fps, (vid.ori_width, vid.ori_height))
+        video_out = cv2.VideoWriter( save_path, codec, vid.fps, (vid.ori_width, vid.ori_height))
         pbar = tqdm(total=vid.total, )
         pbar.set_description(f"Running: {os.path.basename(input_video_path).rsplit('.', 1)[0] + f'_{self.name}.mp4'}")
         while num>0:
+            if vid.count < vid.total and vid.ret == False and vid.q.empty():
+                pbar.close()
+                video_out.release()
+                return "The video is broken, please upload the video again."
             frame = vid.read()
             fake_img = self.cartoonize(frame)
             video_out.write(cv2.cvtColor(fake_img, cv2.COLOR_RGB2BGR))
@@ -179,7 +192,8 @@ class Cartoonizer():
         # if flag==0: # 压缩成功，返回压缩后的视频
         #     return input_video_path.rsplit(".",1)[0]+f"_C_{style}.mp4"
         # else: # 否则返回未压缩的视频
-        return input_video_path.rsplit('.',1)[0]+f"_{self.name}.mp4"
+        return save_path
+
 
 
 

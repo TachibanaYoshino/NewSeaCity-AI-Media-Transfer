@@ -1,8 +1,10 @@
+import os
+
 from  tqdm import tqdm
 import cv2
 from source.cartoonize import Cartoonizer
-import os
 import numpy as np
+
 
 def check_folder(log_dir):
     if not os.path.exists(log_dir):
@@ -43,14 +45,14 @@ models = {
 }
 def process():
 
-    for k in list(models.keys()):
-        algo = models[k]
+    # for k in list(models.keys()):
+        algo = models['3d']
 
         # img = cv2.imread('picture/pic/07.jpg')[...,::-1]
 
         # result = algo.cartoonize(img)
-        result = algo.Convert_video('movie/video/05.mp4')
-
+        result = algo.Convert_video('movie/video/x.mp4', "movie")
+        print(result)
         # cv2.imwrite(f'picture/{k}.jpg', result[:,:,::-1])
         print('finished!')
 
