@@ -1,6 +1,6 @@
 import os, base64
 from io import  BytesIO
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 import sys
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
@@ -109,10 +109,10 @@ class Cartoonizer():
 
         landmarks = self.detect_face(img_brg)
         if landmarks is None:
-            print('No face detected!')
+            # print('No face detected!')
             return res
 
-        print('%d faces detected!'%len(landmarks))
+        # print('%d faces detected!'%len(landmarks))
         for landmark in landmarks:
             # get facial 5 points
             f5p = utils.get_f5p(landmark, img_brg)
