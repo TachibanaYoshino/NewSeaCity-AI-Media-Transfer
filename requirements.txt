@@ -1,0 +1,21 @@
+# flask & gunicorn
+flask
+flask-cors
+gunicorn
+gevent
+requests
+
+
+# cv
+easydict
+opencv-python
+sklearn
+scipy
+numpy
+scikit-image
+pillow==9.1.1
+#tensorflow-GPU==1.15.0
+
+--index-url=https://pypi.tuna.tsinghua.edu.cn/simple/
+
+
