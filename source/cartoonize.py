@@ -1,5 +1,5 @@
 import os, base64
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 import sys
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
