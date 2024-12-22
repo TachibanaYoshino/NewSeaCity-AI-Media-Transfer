@@ -3,7 +3,7 @@ tqdm
 easydict
 opencv-python
 numpy
-pillow==9.5.0
+pillow
 #tensorflow-GPU==1.15.0
 
 --index-url=https://pypi.tuna.tsinghua.edu.cn/simple/
