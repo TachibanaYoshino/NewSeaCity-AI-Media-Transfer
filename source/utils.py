@@ -10,8 +10,8 @@ def resize_size(image, size=720):
             h, w = int(size * h / w), size
         else:
             h, w = size, int(size * w / h)
-    # image = cv2.resize(image, (w, h), interpolation=cv2.INTER_AREA)
-    image = Image.fromarray(image).resize( (w, h), Image.ANTIALIAS)
+    image = cv2.resize(image, (w, h), interpolation=cv2.INTER_AREA)
+    # image = Image.fromarray(image).resize( (w, h), Image.ANTIALIAS)
     return np.array(image)
 
 
