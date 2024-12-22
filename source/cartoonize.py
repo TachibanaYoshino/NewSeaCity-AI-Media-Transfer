@@ -69,7 +69,7 @@ class Cartoonizer():
         self.sess_bg = self.load_sess(os.path.join(dataroot, name+'_cartoon_bg.pb'), 'model_bg')
 
         self.box_width = 288
-        global_mask = alpha_img.resize((self.box_width, self.box_width),Image.ANTIALIAS)
+        global_mask = alpha_img.resize((self.box_width, self.box_width),)
         self.global_mask = np.array(global_mask).astype(np.float32) / 255.0
         # self.global_mask = cv2.cvtColor(np.array(global_mask), cv2.COLOR_BGR2GRAY).astype(np.float32) / 255.0
 
@@ -158,7 +158,7 @@ class Cartoonizer():
             res = mask_trans_inv * head_trans_inv + (1 - mask_trans_inv) * res
 
         # res = cv2.resize(res, (ori_w, ori_h), interpolation=cv2.INTER_AREA)
-        res = Image.fromarray(np.uint8(res)).resize( (ori_w, ori_h), Image.ANTIALIAS)
+        res = Image.fromarray(np.uint8(res)).resize( (ori_w, ori_h), )
 
         return np.array(res)[:,:,::-1]  # rgb
 
